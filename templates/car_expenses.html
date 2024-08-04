@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Expenses Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        .expense-entry {
+            transition: background-color 0.3s ease;
+        }
+        .expense-entry:hover {
+            background-color: #333;
+        }
+        .flatpickr-calendar {
+            background-color: #333;
+            color: #fff;
+        }
+        .flatpickr-day.selected, .flatpickr-day.today {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <div class="container bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center">Car Expenses Tracker</h1>
+        <form action="/submit-expense" method="post">
+            <div class="mb-4">
+                <label for="date" class="block text-sm font-bold mb-2">Date:</label>
+                <input type="text" id="date" name="date" class="border border-white-700 bg-gray-900 text-white rounded p-2 w-full" placeholder="Select date">
+            </div>
+            <div class="mb-4">
+                <label for="fuel_cost" class="block text-sm font-bold mb-2">Fuel Cost:</label>
+                <input type="text" id="fuel_cost" name="fuel_cost" placeholder="Fuel Cost ($)" class="border border-gray-700 bg-gray-900 text-white rounded p-2 w-full">
+            </div>
+            <div class="mb-4">
+                <label for="maintenance_cost" class="block text-sm font-bold mb-2">Maintenance Cost:</label>
+                <input type="text" id="maintenance_cost" name="maintenance_cost" placeholder="Maintenance Cost ($)" class="border border-gray-700 bg-gray-900 text-white rounded p-2 w-full">
+            </div>
+            <div class="mb-4">
+                <label for="repair_cost" class="block text-sm font-bold mb-2">Repair Cost:</label>
+                <input type="text" id="repair_cost" name="repair_cost" placeholder="Repair Cost ($)" class="border border-gray-700 bg-gray-900 text-white rounded p-2 w-full">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Submit</button>
+        </form>
+
+        {% if error %}
+        <div class="mt-6 bg-red-500 p-4 rounded text-white">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Expenses Summary</h2>
+        <div class="bg-gray-700 p-4 rounded-lg">
+            {% if expenses %}
+                <table class="w-full text-left">
+                    <thead>
+                        <tr>
+                            <th class="p-2">Date</th>
+                            <th class="p-2">Fuel Cost</th>
+                            <th class="p-2">Maintenance Cost</th>
+                            <th class="p-2">Repair Cost</th>
+                            <th class="p-2">Total Expense</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                        <tr class="expense-entry">
+                            <td class="p-2">{{ expense.date }}</td>
+                            <td class="p-2">${{ expense.fuel_cost }}</td>
+                            <td class="p-2">${{ expense.maintenance_cost }}</td>
+                            <td class="p-2">${{ expense.repair_cost }}</td>
+                            <td class="p-2">${{ expense.total_expense }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center text-gray-400">No expenses recorded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#date", {
+            dateFormat: "Y-m-d",
+            enableTime: false,
+            allowInput: true
+        });
+    </script>
+
+</body>
+</html>

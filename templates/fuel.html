@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Cost Estimator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<style>
+    body{
+        background-color: #000;
+    }
+</style>
+<body class="bg-black-100 flex items-center justify-center h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Fuel Cost Estimator</h1>
+        <form action="/fuel-cost" method="post">
+            <div class="mb-4">
+                <label for="distance" class="block text-gray-700 text-sm font-bold mb-2">Distance (km):</label>
+                <input type="text" id="distance" name="distance" placeholder="Enter distance in km" class="border p-2 rounded w-full" required>
+            </div>
+            <div class="mb-4">
+                <label for="fuel_price" class="block text-gray-700 text-sm font-bold mb-2">Fuel Price (per liter):</label>
+                <input type="text" id="fuel_price" name="fuel_price" placeholder="Enter fuel price per liter" class="border p-2 rounded w-full" required>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Calculate Cost</button>
+        </form>
+    </div>
+
+</body>
+</html>

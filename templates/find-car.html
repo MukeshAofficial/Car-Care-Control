@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My Car</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .button {
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .button:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+        .button:active {
+            transform: scale(0.98);
+        }
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <div class="container p-6 rounded-lg">
+        <h2 class="text-center text-2xl font-bold mb-6">Find My Car</h2>
+        <div class="flex flex-col items-center">
+            <button class="button bg-blue-600 text-white p-3 rounded-lg mb-4" onclick="saveCarLocation()">Save Location</button>
+            <button class="button bg-green-600 text-white p-3 rounded-lg" onclick="findCarLocation()">Find Car</button>
+        </div>
+    </div>
+
+    <script>
+        function saveCarLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    localStorage.setItem('carLocation', JSON.stringify({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }));
+                    alert('Car location saved!');
+                }, function(error) {
+                    alert('Error getting location: ' + error.message);
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        function findCarLocation() {
+            const location = JSON.parse(localStorage.getItem('carLocation'));
+            if (location) {
+                window.open(`https://www.google.com/maps?q=${location.lat},${location.lng}`, '_blank');
+            } else {
+                alert('No car location saved.');
+            }
+        }
+    </script>
+
+</body>
+</html>

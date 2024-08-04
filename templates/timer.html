@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Timer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body{
+            background-color: black;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+        .input-field {
+            margin-bottom: 10px;
+        }
+        .alert {
+            display: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .alert.alert-warning {
+            background-color: #ffcc00;
+            color: #333;
+        }
+        .alert.alert-danger {
+            background-color: #ff4d4d;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="bg-black-100 flex items-center justify-center h-screen">
+
+    <div class="container bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center">Parking Timer</h1>
+        <form id="timerForm">
+            <div class="input-field">
+                <label for="minutes" class="block text-gray-700 text-sm font-bold mb-2">Set Timer (in minutes):</label>
+                <input type="number" id="minutes" name="minutes" min="1" class="border rounded w-full py-2 px-3 text-gray-700" required>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Set Timer</button>
+        </form>
+        <p id="message" class="mt-4 text-center text-green-500"></p>
+        <div id="timerDisplay" class="text-center mt-4"></div>
+        <div id="alert" class="alert alert-warning"></div>
+        <audio id="alertSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+    </div>
+
+    <script>
+        const timerForm = document.getElementById('timerForm');
+        const message = document.getElementById('message');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const alertDiv = document.getElementById('alert');
+        const alertSound = document.getElementById('alertSound');
+
+        timerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const minutes = document.getElementById('minutes').value;
+
+            fetch('/set_timer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `minutes=${minutes}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Timer set') {
+                    message.innerText = `Timer set for ${minutes} minutes.`;
+                    startTimer();
+                } else {
+                    message.innerText = data.message;
+                }
+            });
+        });
+
+        function startTimer() {
+            setInterval(function() {
+                fetch('/get_time')
+                    .then(response => response.json())
+                    .then(data => {
+                        const timeLeft = Math.max(0, Math.floor(data.time_left));
+                        if (timeLeft === 0) {
+                            timerDisplay.innerText = 'Time is up!';
+                            alertDiv.classList.remove('alert-warning');
+                            alertDiv.classList.add('alert-danger');
+                            alertDiv.innerText = 'Time is up!';
+                            alertSound.play();
+                        } else {
+                            const minutes = Math.floor(timeLeft / 60);
+                            const seconds = timeLeft % 60;
+                            timerDisplay.innerText = `Time Left: ${minutes}m ${seconds}s`;
+                            if (timeLeft <= 60) {
+                                alertDiv.classList.remove('alert-warning');
+                                alertDiv.classList.add('alert-warning');
+                                alertDiv.innerText = 'Time is about to expire!';
+                                alertSound.play();
+                            } else {
+                                alertDiv.classList.add('alert-warning');
+                                alertDiv.classList.remove('alert-danger');
+                                alertDiv.innerText = '';
+                            }
+                        }
+                    });
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>
